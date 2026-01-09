@@ -20,6 +20,7 @@ export default function handler(req, res) {
 
   // Mock successful upload response
   const result = {
+    success: true,
     id: imageId,
     originalSize: 1024000,
     processedSize: 800000,
