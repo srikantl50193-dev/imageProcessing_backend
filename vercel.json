@@ -4,7 +4,7 @@
   "installCommand": "npm install",
   "functions": {
     "dist/index.js": {
-      "runtime": "@vercel/node"
+      "runtime": "nodejs18.x"
     }
   },
   "routes": [
