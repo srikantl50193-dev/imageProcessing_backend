@@ -39,4 +39,4 @@ pids/
 coverage/
 
 # TypeScript
-*.tsbuildinfo
+*.tsbuildinfo.env
