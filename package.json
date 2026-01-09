@@ -2,11 +2,10 @@
   "name": "imageprocessing_backend",
   "version": "1.0.0",
   "description": "Image transformation service with background removal and horizontal flipping",
-  "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
+    "build": "echo 'No build needed for Vercel API routes'",
+    "start": "echo 'Direct Vercel API routes used'",
+    "dev": "echo 'Development not needed for Vercel API routes'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
