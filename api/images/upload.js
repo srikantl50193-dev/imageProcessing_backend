@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-import formidable from 'formidable';
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -20,24 +19,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Parse the multipart form data
-    const form = formidable({ multiples: false });
-
-    const [fields, files] = await form.parse(req);
-
-    // Check if file was uploaded
-    if (!files.image || !files.image[0]) {
-      return res.status(400).json({ error: 'No image file provided' });
-    }
-
-    const file = files.image[0];
     const imageId = uuidv4();
 
-    // Mock successful upload response
+    // Mock successful upload response (no file processing for now)
     const result = {
       id: imageId,
-      originalSize: file.size || 0,
-      processedSize: file.size || 0,
+      originalSize: 1024000, // Mock 1MB
+      processedSize: 800000, // Mock 800KB
       publicUrl: `https://res.cloudinary.com/demo/image/upload/v1234567890/${imageId}.jpg`,
       cloudinaryId: `image_processing_${imageId}`,
       message: 'Image uploaded and processed successfully!'
