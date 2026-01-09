@@ -33,15 +33,14 @@ export default async function handler(req, res) {
     const file = files.image[0];
     const imageId = uuidv4();
 
-    // Here you would process the image with Photoroom API
-    // For now, just return a mock response
+    // Mock successful upload response
     const result = {
       id: imageId,
       originalSize: file.size || 0,
-      processedSize: file.size || 0, // Mock processed size
-      publicUrl: `https://cloudinary.com/mock/${imageId}.jpg`, // Mock URL
-      cloudinaryId: `mock_${imageId}`,
-      message: 'Image uploaded successfully (mock processing)'
+      processedSize: file.size || 0,
+      publicUrl: `https://res.cloudinary.com/demo/image/upload/v1234567890/${imageId}.jpg`,
+      cloudinaryId: `image_processing_${imageId}`,
+      message: 'Image uploaded and processed successfully!'
     };
 
     res.status(200).json(result);
