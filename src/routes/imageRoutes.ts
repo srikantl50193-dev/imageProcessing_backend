@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { upload } from '../middleware/uploadMiddleware';
 import { ImageProcessingService } from '../services/imageProcessingService';
 import { ImageStorageService } from '../services/imageStorageService';
@@ -10,7 +10,7 @@ const imageProcessingService = new ImageProcessingService();
 const imageStorage = new ImageStorageService();
 
 // Upload and process image
-router.post('/upload', upload.single('image'), async (req, res) => {
+router.post('/upload', upload.single('image'), async (req: Request, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -57,7 +57,7 @@ router.post('/upload', upload.single('image'), async (req, res) => {
 });
 
 // Get image status
-router.get('/:id/status', (req, res) => {
+router.get('/:id/status', (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const image = imageStorage.getImage(id);
@@ -87,7 +87,7 @@ router.get('/:id/status', (req, res) => {
 });
 
 // Get processed image
-router.get('/:id', (req, res) => {
+router.get('/:id', (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const image = imageStorage.getImage(id);
@@ -123,7 +123,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Delete image
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const image = imageStorage.getImage(id);
