@@ -9,8 +9,10 @@ import morgan from 'morgan';
 import { imageRoutes } from './routes/imageRoutes';
 import { env, validateEnvironment } from './utils/env';
 
-// Validate required environment variables
-validateEnvironment();
+// Validate required environment variables (skip in development for debugging)
+if (process.env.NODE_ENV === 'production') {
+    validateEnvironment();
+}
 
 const app = express();
 const PORT = env.PORT;
@@ -44,6 +46,20 @@ app.use('/api/images', imageRoutes);
 // Health check endpoint
 app.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'OK', message: 'Image Processing Service is running' });
+});
+
+// Test endpoint (no environment variables required)
+app.get('/test', (_req: Request, res: Response) => {
+  res.json({
+    status: 'OK',
+    message: 'Basic serverless function working',
+    timestamp: new Date().toISOString(),
+    environment: {
+      NODE_ENV: process.env.NODE_ENV,
+      hasPhotoroomKey: !!process.env.PHOTOROOM_API_KEY,
+      hasCloudinaryKey: !!process.env.CLOUDINARY_API_KEY
+    }
+  });
 });
 
 // Error handling middleware
