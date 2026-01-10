@@ -122,24 +122,45 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
 
+  console.log('📡 Upload request received:', {
+    method: req.method,
+    headers: req.headers['content-type'],
+    timestamp: new Date().toISOString()
+  });
+
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('🔍 CORS preflight request handled');
     res.status(200).end();
     return;
   }
 
   // Only allow POST requests
   if (req.method !== 'POST') {
+    console.log('❌ Invalid method:', req.method);
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  console.log('✅ POST request validated');
+
+  console.log('🔄 Starting upload processing...');
+
   try {
     // Validate environment variables
+    console.log('🔍 Checking environment variables...');
     const missingVars = [];
     if (!PHOTOROOM_API_KEY) missingVars.push('PHOTOROOM_API_KEY');
     if (!CLOUDINARY_CLOUD_NAME) missingVars.push('CLOUDINARY_CLOUD_NAME');
     if (!CLOUDINARY_API_KEY) missingVars.push('CLOUDINARY_API_KEY');
     if (!CLOUDINARY_API_SECRET) missingVars.push('CLOUDINARY_API_SECRET');
+
+    console.log('📊 Environment check result:', {
+      photoroom: !!PHOTOROOM_API_KEY,
+      cloudinary_name: !!CLOUDINARY_CLOUD_NAME,
+      cloudinary_key: !!CLOUDINARY_API_KEY,
+      cloudinary_secret: !!CLOUDINARY_API_SECRET,
+      missing: missingVars
+    });
 
     if (missingVars.length > 0) {
       console.error('❌ Missing environment variables:', missingVars);
@@ -154,6 +175,7 @@ export default async function handler(req, res) {
     console.log('✅ All environment variables validated');
 
     // Parse multipart form data - configured for Vercel serverless
+    console.log('📝 Parsing multipart form data...');
     const form = formidable({
       maxFileSize: 10 * 1024 * 1024, // 10MB
       keepExtensions: true,
@@ -162,10 +184,19 @@ export default async function handler(req, res) {
     });
 
     const [fields, files] = await form.parse(req);
+    console.log('📁 Form parsing complete:', {
+      fieldsCount: Object.keys(fields).length,
+      filesCount: Object.keys(files).length,
+      hasImage: !!files.image,
+      imageCount: files.image ? files.image.length : 0
+    });
 
     if (!files.image || !files.image[0]) {
+      console.log('❌ No image file found in upload');
       return res.status(400).json({ error: 'No image file provided' });
     }
+
+    console.log('✅ Image file detected');
 
     const file = files.image[0];
     console.log('📁 File received:', {
