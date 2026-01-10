@@ -1,5 +1,5 @@
-const { v4: uuidv4 } = require('uuid');
-const sharp = require('sharp');
+// Dynamic imports to avoid Vercel loading issues
+let uuidv4, sharp;
 
 // Environment variables
 const PHOTOROOM_API_KEY = process.env.PHOTOROOM_API_KEY;
@@ -29,7 +29,7 @@ function isRetryableError(error) {
 
 // Upload to Cloudinary
 async function uploadToCloudinary(buffer, publicId) {
-  const cloudinary = require('cloudinary').v2;
+  const { v2: cloudinary } = require('cloudinary');
 
   cloudinary.config({
     cloud_name: CLOUDINARY_CLOUD_NAME,
@@ -132,6 +132,14 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Load modules dynamically to avoid Vercel loading issues
+    if (!uuidv4) {
+      const uuid = require('uuid');
+      uuidv4 = uuid.v4;
+    }
+    if (!sharp) {
+      sharp = require('sharp');
+    }
     // Validate environment variables
     if (!PHOTOROOM_API_KEY || !CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
       console.error('Missing required environment variables');
