@@ -1,6 +1,6 @@
 export default function handler(req, res) {
   // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', 'https://image-processing-l6d0tx1t2-srikant-lakshminarayans-projects.vercel.app');
+  res.setHeader('Access-Control-Allow-Origin', 'https://image-processing-d5ciw69i6-srikant-lakshminarayans-projects.vercel.app');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
 
