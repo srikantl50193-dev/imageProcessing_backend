@@ -14,6 +14,7 @@ cloudinary.config({
 // In-memory storage for processing status (in production, use Redis/database)
 const processingStatus = new Map();
 
+// Force redeploy - status fix for mock responses
 export default async function handler(req, res) {
   // Enable CORS - Allow all Vercel origins for this demo
   res.setHeader('Access-Control-Allow-Origin', '*');
