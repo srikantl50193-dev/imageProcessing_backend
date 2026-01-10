@@ -144,12 +144,13 @@ export default async function handler(req, res) {
       console.error('❌ Missing environment variables:', missingVars);
       return res.status(500).json({
         error: 'Server configuration error',
-        details: `Missing required environment variables: ${missingVars.join(', ')}`,
-        missingVars: missingVars
+        details: `Missing required environment variables: ${missingVars.join(', ')}. Please check your Vercel environment variables.`,
+        missingVars: missingVars,
+        instructions: 'Add these environment variables in your Vercel dashboard: PHOTOROOM_API_KEY, CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET'
       });
     }
 
-    console.log('✅ Environment variables validated');
+    console.log('✅ All environment variables validated');
 
     // Parse multipart form data - configured for Vercel serverless
     const form = formidable({
@@ -226,18 +227,55 @@ export default async function handler(req, res) {
     console.log('🖼️ Starting REAL image processing with Photoroom + Sharp + Cloudinary...');
     console.log('📊 Original image size:', imageBuffer.length, 'bytes');
 
-    // Step 1: Remove background
-    console.log('🖼️ Removing background with Photoroom API...');
-    const backgroundRemovedBlob = await removeBackground(imageBuffer, originalName);
-    const backgroundRemovedBuffer = Buffer.from(await backgroundRemovedBlob.arrayBuffer());
+    let backgroundRemovedBuffer;
+    let flippedBuffer;
+    let uploadResult;
 
-    // Step 2: Flip horizontally
-    console.log('🔄 Flipping image horizontally with Sharp...');
-    const flippedBuffer = await flipImageHorizontally(backgroundRemovedBuffer);
+    try {
+      // Step 1: Remove background
+      console.log('🖼️ Removing background with Photoroom API...');
+      const backgroundRemovedBlob = await removeBackground(imageBuffer, originalName);
+      backgroundRemovedBuffer = Buffer.from(await backgroundRemovedBlob.arrayBuffer());
+      console.log('✅ Background removed, size:', backgroundRemovedBuffer.length, 'bytes');
 
-    // Step 3: Upload to Cloudinary
-    console.log('☁️ Uploading processed image to Cloudinary...');
-    const uploadResult = await uploadToCloudinary(flippedBuffer, imageId);
+      // Step 2: Flip horizontally
+      console.log('🔄 Flipping image horizontally with Sharp...');
+      flippedBuffer = await flipImageHorizontally(backgroundRemovedBuffer);
+      console.log('✅ Image flipped, size:', flippedBuffer.length, 'bytes');
+
+      // Step 3: Upload to Cloudinary
+      console.log('☁️ Uploading processed image to Cloudinary...');
+      uploadResult = await uploadToCloudinary(flippedBuffer, imageId);
+      console.log('✅ Uploaded to Cloudinary:', uploadResult.secure_url);
+
+    } catch (processingError) {
+      console.error('❌ Processing error details:', {
+        step: processingError.step || 'unknown',
+        message: processingError.message,
+        stack: processingError.stack?.substring(0, 200)
+      });
+
+      // Return specific error based on what failed
+      if (processingError.message?.includes('Photoroom')) {
+        return res.status(502).json({
+          error: 'Background removal service error',
+          message: 'Unable to process image background. Please try again.',
+          details: 'Photoroom API service unavailable'
+        });
+      } else if (processingError.message?.includes('Cloudinary')) {
+        return res.status(502).json({
+          error: 'Storage service error',
+          message: 'Unable to save processed image. Please try again.',
+          details: 'Cloudinary storage service unavailable'
+        });
+      } else {
+        return res.status(500).json({
+          error: 'Image processing failed',
+          message: 'An error occurred while processing your image.',
+          details: processingError.message
+        });
+      }
+    }
 
     const result = {
       success: true,
