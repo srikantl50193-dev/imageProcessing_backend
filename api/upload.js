@@ -1,8 +1,3 @@
-// Simple UUID generation for now
-function generateId() {
-  return Date.now().toString() + Math.random().toString(36).substr(2, 9);
-}
-
 export default function handler(req, res) {
   // Enable CORS - Allow all Vercel origins for this demo
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,25 +10,13 @@ export default function handler(req, res) {
     return;
   }
 
-  // Only allow POST requests
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  // Simple test response
-  const imageId = generateId();
-
-  const result = {
-    success: true,
-    id: imageId,
-    publicUrl: `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZTVlN2ViIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIyMDAiIHk9IjIwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiMxMTE4MjciIGZvbnQtd2VpZ2h0PSJib2xkIj7inIUgUHJvY2Vzc2VkIEltYWdlPC90ZXh0Pjx0ZXh0IHg9IjIwMCIgeT0iMjI1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzZiNzI4MCI+SUQ6ICRpZF0kPC90ZXh0Pjwvc3ZnPg==`.replace('$id', imageId),
-    cloudinaryId: `processed_${imageId}`,
-    originalSize: 1024000,
-    processedSize: 800000,
-    message: 'CORS test - basic upload working'
-  };
-
-  res.status(200).json(result);
+  // Simple response like test.js
+  res.status(200).json({
+    status: 'OK',
+    message: 'Upload endpoint works with CORS!',
+    timestamp: new Date().toISOString(),
+    method: req.method
+  });
 }
 
 export const config = {
