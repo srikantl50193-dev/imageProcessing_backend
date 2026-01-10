@@ -2,5 +2,13 @@
   "version": 2,
   "installCommand": "npm install",
   "outputDirectory": "public",
-  "buildCommand": "echo 'API routes only - no build needed'"
+  "buildCommand": "echo 'API routes only - no build needed'",
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "env": {
+    "NODE_OPTIONS": "--no-deprecation"
+  }
 }
