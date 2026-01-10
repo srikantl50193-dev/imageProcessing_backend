@@ -1,6 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
 const sharp = require('sharp');
-const FormData = require('form-data');
 
 // Environment variables
 const PHOTOROOM_API_KEY = process.env.PHOTOROOM_API_KEY;
@@ -136,88 +135,25 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Validate environment variables
-    if (!PHOTOROOM_API_KEY || !CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-      console.error('Missing required environment variables');
-      return res.status(500).json({ error: 'Server configuration error' });
-    }
-
-    // For Vercel, we need to handle multipart data differently
-    const formidable = require('formidable');
-
-    const form = formidable({
-      maxFileSize: 10 * 1024 * 1024, // 10MB
-      keepExtensions: true,
-    });
-
-    const [fields, files] = await form.parse(req);
-
-    if (!files.image || !files.image[0]) {
-      return res.status(400).json({ error: 'No image file provided' });
-    }
-
-    const file = files.image[0];
-    const imageBuffer = require('fs').readFileSync(file.filepath);
-    const originalName = file.originalFilename || 'uploaded-image.jpg';
+    // Simple test response first
     const imageId = uuidv4();
-
-    // Set processing status
-    processingStatus.set(imageId, 'processing');
-
-    console.log('🖼️ Starting image processing...');
-
-    // Step 1: Remove background
-    console.log('🖼️ Removing background...');
-    const backgroundRemovedBlob = await removeBackground(imageBuffer, originalName);
-    const backgroundRemovedBuffer = Buffer.from(await backgroundRemovedBlob.arrayBuffer());
-
-    // Step 2: Flip horizontally
-    console.log('🔄 Flipping image horizontally...');
-    const flippedBuffer = await flipImageHorizontally(backgroundRemovedBuffer);
-
-    // Step 3: Upload to Cloudinary
-    console.log('☁️ Uploading to cloud storage...');
-    const uploadResult = await uploadToCloudinary(flippedBuffer, imageId);
 
     const result = {
       success: true,
       id: imageId,
-      publicUrl: uploadResult.secure_url,
-      cloudinaryId: uploadResult.public_id,
-      originalSize: imageBuffer.length,
-      processedSize: flippedBuffer.length,
-      message: 'Image processed successfully!'
+      publicUrl: `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZTVlN2ViIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIyMDAiIHk9IjIwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiMxMTE4MjciIGZvbnQtd2VpZ2h0PSJib2xkIj7inIUgUHJvY2Vzc2VkIEltYWdlPC90ZXh0Pjx0ZXh0IHg9IjIwMCIgeT0iMjI1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzZiNzI4MCI+SUQ6ICRpZF0kPC90ZXh0Pjwvc3ZnPg==`.replace('$id', imageId),
+      cloudinaryId: `processed_${imageId}`,
+      originalSize: 1024000,
+      processedSize: 800000,
+      message: 'Image processing temporarily disabled - using placeholder'
     };
-
-    console.log('✅ Image processing completed successfully');
-
-    // Update processing status to completed
-    processingStatus.set(imageId, 'completed');
 
     res.status(200).json(result);
 
   } catch (error) {
-    console.error('❌ Upload processing failed:', error);
-
-    // Update processing status to failed
-    processingStatus.set(imageId, 'failed');
-
-    let errorMessage = 'Image processing failed';
-    let statusCode = 500;
-
-    if (error.message?.includes('Photoroom API returned status 403')) {
-      errorMessage = 'Background removal service temporarily unavailable. Please try again.';
-      statusCode = 503;
-    } else if (error.message?.includes('Photoroom API returned status 402')) {
-      errorMessage = 'Background removal service credits exhausted.';
-      statusCode = 503;
-    } else if (error.message?.includes('Photoroom API returned status 400')) {
-      errorMessage = 'Invalid image format or corrupted image file.';
-      statusCode = 400;
-    }
-
-    res.status(statusCode).json({
-      error: errorMessage,
+    console.error('❌ Upload failed:', error);
+    res.status(500).json({
+      error: 'Upload failed',
       message: error.message
     });
   }
