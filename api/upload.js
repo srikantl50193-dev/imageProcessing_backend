@@ -1,6 +1,5 @@
 // Clean, minimal upload handler for CORS testing
-
-export default async function handler(req, res) {
+export default function handler(req, res) {
   // Enable CORS - Allow all Vercel origins for this demo
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -18,17 +17,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Temporary simple response to test CORS
+    // Simple CORS test response
     const imageId = Date.now().toString();
 
     res.status(200).json({
       success: true,
       id: imageId,
-      publicUrl: `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZTFlM2U5IiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIyMDAiIHk9IjE4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiMxZjI5M2QiIGZvbnQtd2VpZ2h0PSJib2xkIj7inIUgQ09SUyBXb3JraW5nIPCfkY08L3RleHQ+PHRleHQgeD0iMjAwIiB5PSIyMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNmI3MjgwIj5JRDogJHtpZH08L3RleHQ+PC9zdmc+`.replace('${id}', imageId),
+      publicUrl: `data:image/svg+xml;base64,${Buffer.from(`<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="400" fill="#ffffff" stroke="#e1e3e9" stroke-width="2"/><text x="200" y="180" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" fill="#1f293d" font-weight="bold">✅ CORS Working</text><text x="200" y="220" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#6b7280">ID: ${imageId}</text></svg>`).toString('base64')}`,
       cloudinaryId: `processed_${imageId}`,
       originalSize: 1024000,
       processedSize: 800000,
-      message: 'CORS test - simplified upload working!'
+      message: 'CORS working - upload endpoint responding!'
     });
 
   } catch (error) {

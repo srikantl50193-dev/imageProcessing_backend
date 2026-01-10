@@ -43,7 +43,7 @@ export default async function handler(req, res) {
   const status = {
     id: id,
     status: 'completed',
-    publicUrl: `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2ZmZmZmYiIgc3Ryb2tlPSIjZTFlM2U5IiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIyMDAiIHk9IjE4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiMxZjI5M2QiIGZvbnQtd2VpZ2h0PSJib2xkIj7inIUgQ09SUyBXb3JraW5nIPCfkY08L3RleHQ+PHRleHQgeD0iMjAwIiB5PSIyMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNmI3MjgwIj5JRDog${id}</dGV4dD48L3N2Zz4+`,
+    publicUrl: `data:image/svg+xml;base64,${Buffer.from(`<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="400" fill="#ffffff" stroke="#e1e3e9" stroke-width="2"/><text x="200" y="180" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" fill="#1f293d" font-weight="bold">✅ CORS Working</text><text x="200" y="220" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#6b7280">ID: ${id}</text></svg>`).toString('base64')}`,
     cloudinaryId: `processed_${id}`,
     originalSize: 1024000,
     processedSize: 800000,
