@@ -135,8 +135,16 @@ export default async function handler(req, res) {
   try {
     // Validate environment variables
     if (!PHOTOROOM_API_KEY || !CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-      console.error('Missing required environment variables');
-      return res.status(500).json({ error: 'Server configuration error' });
+      console.error('Missing environment variables:', {
+        PHOTOROOM_API_KEY: !!PHOTOROOM_API_KEY,
+        CLOUDINARY_CLOUD_NAME: !!CLOUDINARY_CLOUD_NAME,
+        CLOUDINARY_API_KEY: !!CLOUDINARY_API_KEY,
+        CLOUDINARY_API_SECRET: !!CLOUDINARY_API_SECRET
+      });
+      return res.status(500).json({
+        error: 'Server configuration error',
+        details: 'Missing required API keys. Please check Vercel environment variables.'
+      });
     }
 
     // Parse multipart form data
@@ -152,11 +160,28 @@ export default async function handler(req, res) {
     }
 
     const file = files.image[0];
-    const imageBuffer = require('fs').readFileSync(file.filepath);
+    console.log('📁 File received:', {
+      originalName: file.originalFilename,
+      size: file.size,
+      filepath: file.filepath
+    });
+
+    let imageBuffer;
+    try {
+      imageBuffer = require('fs').readFileSync(file.filepath);
+    } catch (fsError) {
+      console.error('❌ File read error:', fsError);
+      return res.status(500).json({
+        error: 'File processing error',
+        message: 'Unable to read uploaded file'
+      });
+    }
+
     const originalName = file.originalFilename || 'uploaded-image.jpg';
     const imageId = uuidv4();
 
     console.log('🖼️ Starting REAL image processing with Photoroom + Sharp + Cloudinary...');
+    console.log('📊 Original image size:', imageBuffer.length, 'bytes');
 
     // Step 1: Remove background
     console.log('🖼️ Removing background with Photoroom API...');
