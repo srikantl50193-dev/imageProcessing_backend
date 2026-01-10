@@ -156,7 +156,7 @@ export default async function handler(req, res) {
     const originalName = file.originalFilename || 'uploaded-image.jpg';
     const imageId = uuidv4();
 
-    console.log('🖼️ Starting REAL image processing...');
+    console.log('🖼️ Starting REAL image processing with Photoroom + Sharp + Cloudinary...');
 
     // Step 1: Remove background
     console.log('🖼️ Removing background with Photoroom API...');
