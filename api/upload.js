@@ -291,19 +291,22 @@ export default async function handler(req, res) {
         return res.status(502).json({
           error: 'Background removal service error',
           message: 'Unable to process image background. Please try again.',
-          details: 'Photoroom API service unavailable'
+          details: `Photoroom API error: ${processingError.message}`,
+          phoroomError: processingError.message
         });
       } else if (processingError.message?.includes('Cloudinary')) {
         return res.status(502).json({
           error: 'Storage service error',
           message: 'Unable to save processed image. Please try again.',
-          details: 'Cloudinary storage service unavailable'
+          details: `Cloudinary error: ${processingError.message}`,
+          cloudinaryError: processingError.message
         });
       } else {
         return res.status(500).json({
           error: 'Image processing failed',
           message: 'An error occurred while processing your image.',
-          details: processingError.message
+          details: processingError.message,
+          fullError: processingError.message
         });
       }
     }
