@@ -21,11 +21,12 @@ export default function handler(req, res) {
     return res.status(400).json({ error: 'Image ID is required' });
   }
 
-  // Mock status response
+  // Mock status response - using a working placeholder image
+  // In a real app, this would be the actual processed image URL from Cloudinary
   const status = {
     id: id,
     status: 'completed', // or 'processing', 'failed'
-    publicUrl: `https://res.cloudinary.com/demo/image/upload/v1234567890/${id}_processed.jpg`,
+    publicUrl: `https://picsum.photos/400/400?random=${id}`, // Working placeholder image
     cloudinaryId: `processed_${id}`
   };
 
