@@ -134,18 +134,22 @@ export default async function handler(req, res) {
 
   try {
     // Validate environment variables
-    if (!PHOTOROOM_API_KEY || !CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-      console.error('Missing environment variables:', {
-        PHOTOROOM_API_KEY: !!PHOTOROOM_API_KEY,
-        CLOUDINARY_CLOUD_NAME: !!CLOUDINARY_CLOUD_NAME,
-        CLOUDINARY_API_KEY: !!CLOUDINARY_API_KEY,
-        CLOUDINARY_API_SECRET: !!CLOUDINARY_API_SECRET
-      });
+    const missingVars = [];
+    if (!PHOTOROOM_API_KEY) missingVars.push('PHOTOROOM_API_KEY');
+    if (!CLOUDINARY_CLOUD_NAME) missingVars.push('CLOUDINARY_CLOUD_NAME');
+    if (!CLOUDINARY_API_KEY) missingVars.push('CLOUDINARY_API_KEY');
+    if (!CLOUDINARY_API_SECRET) missingVars.push('CLOUDINARY_API_SECRET');
+
+    if (missingVars.length > 0) {
+      console.error('❌ Missing environment variables:', missingVars);
       return res.status(500).json({
         error: 'Server configuration error',
-        details: 'Missing required API keys. Please check Vercel environment variables.'
+        details: `Missing required environment variables: ${missingVars.join(', ')}`,
+        missingVars: missingVars
       });
     }
+
+    console.log('✅ Environment variables validated');
 
     // Parse multipart form data
     const form = formidable({
