@@ -25,11 +25,8 @@ export default function handler(req, res) {
   const status = {
     id: id,
     status: 'completed', // or 'processing', 'failed'
-    progress: 100,
-    result: {
-      publicUrl: `https://res.cloudinary.com/demo/image/upload/v1234567890/${id}_processed.jpg`,
-      cloudinaryId: `processed_${id}`
-    }
+    publicUrl: `https://res.cloudinary.com/demo/image/upload/v1234567890/${id}_processed.jpg`,
+    cloudinaryId: `processed_${id}`
   };
 
   res.status(200).json(status);
