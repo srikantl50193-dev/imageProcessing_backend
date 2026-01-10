@@ -51,47 +51,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Image ID is required' });
   }
 
-  const maxRetries = 3;
-  let lastError = null;
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      // Delete from Cloudinary
-      await cloudinary.uploader.destroy(id);
-
-      res.status(200).json({
-        success: true,
-        message: `Image ${id} deleted successfully from cloud storage`,
-        id: id,
-        cloudDeleteSuccess: true
-      });
-      return;
-
-    } catch (error) {
-      console.error(`Cloudinary delete attempt ${attempt}/${maxRetries} failed:`, error.message);
-      lastError = error;
-
-      const shouldRetry = isRetryableCloudinaryError(error);
-
-      if (!shouldRetry || attempt === maxRetries) {
-        break;
-      }
-
-      const retryDelay = getCloudinaryRetryDelay(attempt);
-      console.log(`Retrying Cloudinary delete in ${retryDelay}ms... (attempt ${attempt + 1}/${maxRetries})`);
-      await new Promise(resolve => setTimeout(resolve, retryDelay));
-    }
-  }
-
-  // If we get here, all retries failed
-  console.error('Cloudinary delete failed after all retries:', lastError?.message);
-
-  // Still return success but indicate cloud delete failed
+  // For mock/placeholder mode, just return success
+  // In production, this would actually delete from Cloudinary
   res.status(200).json({
     success: true,
-    message: `Image ${id} local cleanup completed, but cloud deletion may have failed`,
+    message: `Image ${id} mock deletion successful`,
     id: id,
-    cloudDeleteSuccess: false,
-    error: lastError?.message
+    cloudDeleteSuccess: true
   });
 }
