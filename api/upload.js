@@ -151,10 +151,12 @@ export default async function handler(req, res) {
 
     console.log('✅ Environment variables validated');
 
-    // Parse multipart form data
+    // Parse multipart form data - configured for Vercel serverless
     const form = formidable({
       maxFileSize: 10 * 1024 * 1024, // 10MB
       keepExtensions: true,
+      uploadDir: '/tmp', // Use /tmp for Vercel serverless
+      multiples: false,
     });
 
     const [fields, files] = await form.parse(req);
@@ -167,17 +169,33 @@ export default async function handler(req, res) {
     console.log('📁 File received:', {
       originalName: file.originalFilename,
       size: file.size,
-      filepath: file.filepath
+      filepath: file.filepath,
+      mimetype: file.mimetype
     });
 
     let imageBuffer;
     try {
-      imageBuffer = require('fs').readFileSync(file.filepath);
+      // In Vercel, we might need to handle the file differently
+      if (file.filepath && require('fs').existsSync(file.filepath)) {
+        imageBuffer = require('fs').readFileSync(file.filepath);
+        console.log('📖 Read file from filepath');
+      } else if (file._writeStream && file._writeStream.path) {
+        // Alternative approach for Vercel
+        imageBuffer = require('fs').readFileSync(file._writeStream.path);
+        console.log('📖 Read file from write stream path');
+      } else {
+        // Last resort: try to create buffer from the file object
+        console.error('❌ No accessible file path found');
+        return res.status(500).json({
+          error: 'File processing error',
+          message: 'Unable to access uploaded file in serverless environment'
+        });
+      }
     } catch (fsError) {
       console.error('❌ File read error:', fsError);
       return res.status(500).json({
         error: 'File processing error',
-        message: 'Unable to read uploaded file'
+        message: 'Unable to read uploaded file: ' + fsError.message
       });
     }
 
