@@ -74,6 +74,8 @@ async function removeBackground(imageBuffer, filename) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 seconds timeout
 
+      console.log('📡 Calling Photoroom API with key:', PHOTOROOM_API_KEY ? '***' + PHOTOROOM_API_KEY.slice(-4) : 'MISSING');
+
       const response = await fetch('https://sdk.photoroom.com/v1/segment', {
         method: 'POST',
         headers: {
@@ -85,12 +87,16 @@ async function removeBackground(imageBuffer, filename) {
       });
 
       clearTimeout(timeoutId);
+      console.log('📡 Photoroom API response status:', response.status);
 
       if (response.ok) {
+        console.log('✅ Photoroom API call successful');
         return await response.blob();
       }
 
-      throw new Error(`Photoroom API returned status ${response.status}`);
+      const errorText = await response.text().catch(() => 'No error details');
+      console.error('❌ Photoroom API error:', response.status, errorText);
+      throw new Error(`Photoroom API returned status ${response.status}: ${errorText}`);
 
     } catch (error) {
       console.error(`Background removal attempt ${attempt}/${maxRetries} failed:`, error.message);
