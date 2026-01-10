@@ -1,21 +1,5 @@
-const cloudinary = require('cloudinary').v2;
-
-// Configure Cloudinary
-const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
-const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
-const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
-
-cloudinary.config({
-  cloud_name: CLOUDINARY_CLOUD_NAME,
-  api_key: CLOUDINARY_API_KEY,
-  api_secret: CLOUDINARY_API_SECRET,
-});
-
-// In-memory storage for processing status (in production, use Redis/database)
-const processingStatus = new Map();
-
-// Force redeploy - status fix for mock responses
-export default async function handler(req, res) {
+// Clean status endpoint for CORS testing
+export default function handler(req, res) {
   // Enable CORS - Allow all Vercel origins for this demo
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -38,8 +22,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Image ID is required' });
   }
 
-  // For mock/placeholder mode, return completed status immediately
-  // In production, this would check actual processing status
+  // Return completed status with proper SVG
   const status = {
     id: id,
     status: 'completed',
