@@ -5,7 +5,7 @@
   "buildCommand": "echo 'API routes only - no build needed'",
   "functions": {
     "api/**/*.js": {
-      "runtime": "nodejs18.x"
+      "runtime": "@vercel/node"
     }
   },
   "env": {
