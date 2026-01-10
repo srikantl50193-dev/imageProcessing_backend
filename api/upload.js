@@ -157,7 +157,7 @@ export default async function handler(req, res) {
     const originalName = file.originalFilename || 'uploaded-image.jpg';
     const imageId = uuidv4();
 
-    console.log('🖼️ Starting real image processing...');
+    console.log('🖼️ Starting real image processing with CORS support...');
 
     // Step 1: Remove background
     console.log('🖼️ Removing background with Photoroom API...');
