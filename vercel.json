@@ -3,11 +3,6 @@
   "installCommand": "npm install",
   "outputDirectory": "public",
   "buildCommand": "echo 'API routes only - no build needed'",
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "@vercel/node"
-    }
-  },
   "env": {
     "NODE_OPTIONS": "--no-deprecation"
   }
