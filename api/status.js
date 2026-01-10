@@ -1,4 +1,4 @@
-// Clean status endpoint for CORS testing
+// Clean status endpoint for CORS testing - force redeploy
 export default function handler(req, res) {
   // Enable CORS - Allow all Vercel origins for this demo
   res.setHeader('Access-Control-Allow-Origin', '*');
