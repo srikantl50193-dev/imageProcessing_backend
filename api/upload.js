@@ -132,14 +132,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Load modules dynamically to avoid Vercel loading issues
-    if (!uuidv4) {
-      const uuid = require('uuid');
-      uuidv4 = uuid.v4;
-    }
-    if (!sharp) {
-      sharp = require('sharp');
-    }
+    // Temporary simple response to test CORS
+    const imageId = Date.now().toString();
+
+    res.status(200).json({
+      success: true,
+      id: imageId,
+      publicUrl: `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZTFlM2U5IiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIyMDAiIHk9IjE4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiMxZjI5M2QiIGZvbnQtd2VpZ2h0PSJib2xkIj7inIUgQ09SUyBXb3JraW5nIPCfkY08L3RleHQ+PHRleHQgeD0iMjAwIiB5PSIyMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNmI3MjgwIj5JRDogJHtpZH08L3RleHQ+PC9zdmc+`.replace('${id}', imageId),
+      cloudinaryId: `processed_${imageId}`,
+      originalSize: 1024000,
+      processedSize: 800000,
+      message: 'CORS test - simplified upload working!'
+    });
+    return;
     // Validate environment variables
     if (!PHOTOROOM_API_KEY || !CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
       console.error('Missing required environment variables');
