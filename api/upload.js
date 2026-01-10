@@ -175,20 +175,41 @@ export default async function handler(req, res) {
 
     let imageBuffer;
     try {
-      // In Vercel, we might need to handle the file differently
+      // Try multiple approaches for Vercel serverless file access
       if (file.filepath && require('fs').existsSync(file.filepath)) {
         imageBuffer = require('fs').readFileSync(file.filepath);
         console.log('📖 Read file from filepath');
-      } else if (file._writeStream && file._writeStream.path) {
-        // Alternative approach for Vercel
+      } else if (file._writeStream && file._writeStream.path && require('fs').existsSync(file._writeStream.path)) {
         imageBuffer = require('fs').readFileSync(file._writeStream.path);
         console.log('📖 Read file from write stream path');
+      } else if (file.size > 0) {
+        // Try to read from the file object directly if available
+        console.log('📖 Attempting alternative file access...');
+        // For Vercel, the file might be available in memory or through a different path
+        const fs = require('fs');
+        const tmpPath = `/tmp/${Date.now()}-${file.originalFilename || 'upload'}`;
+        if (file.filepath && fs.existsSync(file.filepath)) {
+          fs.copyFileSync(file.filepath, tmpPath);
+          imageBuffer = fs.readFileSync(tmpPath);
+          fs.unlinkSync(tmpPath); // Clean up
+          console.log('📖 Read file via temp copy');
+        } else {
+          console.error('❌ No accessible file path found');
+          return res.status(500).json({
+            error: 'File processing error',
+            message: 'Unable to access uploaded file in serverless environment',
+            fileInfo: {
+              originalName: file.originalFilename,
+              size: file.size,
+              hasFilepath: !!file.filepath,
+              filepath: file.filepath?.substring(0, 50) + '...'
+            }
+          });
+        }
       } else {
-        // Last resort: try to create buffer from the file object
-        console.error('❌ No accessible file path found');
-        return res.status(500).json({
-          error: 'File processing error',
-          message: 'Unable to access uploaded file in serverless environment'
+        return res.status(400).json({
+          error: 'Invalid file',
+          message: 'Uploaded file appears to be empty or invalid'
         });
       }
     } catch (fsError) {
