@@ -4,7 +4,7 @@ export default function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
 
-  // Check environment variables
+  // Check environment variables for debugging
   const PHOTOROOM_API_KEY = process.env.PHOTOROOM_API_KEY;
   const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
   const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
