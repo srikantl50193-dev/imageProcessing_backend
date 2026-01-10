@@ -43,11 +43,11 @@ export default async function handler(req, res) {
   const status = {
     id: id,
     status: 'completed',
-    publicUrl: `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2ZmZmZmYiIgc3Ryb2tlPSIjZTFlM2U5IiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIyMDAiIHk9IjE4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiMxZjI5M2QiIGZvbnQtd2VpZ2h0PSJib2xkIj7inIUgQ09SUyBXb3JraW5nIPCfkY08L3RleHQ+PHRleHQgeD0iMjAwIiB5PSIyMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNmI3MjgwIj5JRDogJHtpZH08L3RleHQ+PC9zdmc+`.replace('${id}', id),
+    publicUrl: `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2ZmZmZmYiIgc3Ryb2tlPSIjZTFlM2U5IiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIyMDAiIHk9IjE4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiMxZjI5M2QiIGZvbnQtd2VpZ2h0PSJib2xkIj7inIUgQ09SUyBXb3JraW5nIPCfkY08L3RleHQ+PHRleHQgeD0iMjAwIiB5PSIyMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNmI3MjgwIj5JRDog${id}</dGV4dD48L3N2Zz4+`,
     cloudinaryId: `processed_${id}`,
     originalSize: 1024000,
     processedSize: 800000,
-    message: 'CORS working! Image processing placeholder completed.'
+    message: 'CORS working! Status check completed.'
   };
 
   res.status(200).json(status);
