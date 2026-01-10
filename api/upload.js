@@ -258,19 +258,6 @@ export default async function handler(req, res) {
     console.log('🖼️ Starting REAL image processing with Photoroom + Sharp + Cloudinary...');
     console.log('📊 Original image size:', imageBuffer.length, 'bytes');
 
-    // DEBUG: Force return placeholder for testing
-    console.log('🔄 Processing image...');
-    return res.status(200).json({
-      success: true,
-      id: imageId,
-      publicUrl: `data:image/svg+xml;base64,${Buffer.from(`<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="400" fill="#ffffff" stroke="#e1e3e9" stroke-width="2"/><text x="200" y="180" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" fill="#1f293d" font-weight="bold">🔄 Processing...</text><text x="200" y="220" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#6b7280">ID: ${imageId}</text></svg>`).toString('base64')}`,
-      cloudinaryId: `processing_${imageId}`,
-      originalSize: imageBuffer.length,
-      processedSize: 0,
-      message: 'Image upload received - processing in progress...',
-      status: 'processing'
-    });
-
     let backgroundRemovedBuffer;
     let flippedBuffer;
     let uploadResult;
