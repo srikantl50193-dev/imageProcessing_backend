@@ -227,5 +227,5 @@ export const config = {
   api: {
     bodyParser: false, // Disable body parsing for file uploads
   },
-};// Force redeploy v2
-// Force backend redeploy
+};// Force redeploy v4 - CORS wildcard fix
+// Force backend redeploy - wildcard CORS for all origins
