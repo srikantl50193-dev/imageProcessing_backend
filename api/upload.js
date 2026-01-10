@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import sharp from 'sharp';
 import formidable from 'formidable';
 import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs';
 
 // Environment variables
 const PHOTOROOM_API_KEY = process.env.PHOTOROOM_API_KEY;
@@ -177,17 +178,16 @@ export default async function handler(req, res) {
     let imageBuffer;
     try {
       // Try multiple approaches for Vercel serverless file access
-      if (file.filepath && require('fs').existsSync(file.filepath)) {
-        imageBuffer = require('fs').readFileSync(file.filepath);
+      if (file.filepath && fs.existsSync(file.filepath)) {
+        imageBuffer = fs.readFileSync(file.filepath);
         console.log('📖 Read file from filepath');
-      } else if (file._writeStream && file._writeStream.path && require('fs').existsSync(file._writeStream.path)) {
-        imageBuffer = require('fs').readFileSync(file._writeStream.path);
+      } else if (file._writeStream && file._writeStream.path && fs.existsSync(file._writeStream.path)) {
+        imageBuffer = fs.readFileSync(file._writeStream.path);
         console.log('📖 Read file from write stream path');
       } else if (file.size > 0) {
         // Try to read from the file object directly if available
         console.log('📖 Attempting alternative file access...');
         // For Vercel, the file might be available in memory or through a different path
-        const fs = require('fs');
         const tmpPath = `/tmp/${Date.now()}-${file.originalFilename || 'upload'}`;
         if (file.filepath && fs.existsSync(file.filepath)) {
           fs.copyFileSync(file.filepath, tmpPath);
